@@ -1,4 +1,5 @@
 import { FC, useMemo } from 'react';
+import { useNavigate, useLocation } from 'react-router';
 import { TConstructorIngredient } from '@utils-types';
 import { BurgerConstructorUI } from '@ui';
 
@@ -10,24 +11,30 @@ import {
 } from '../../slices/constructorSlice';
 import {
   getNewOrderSelector,
+  getIsOrderCreatingSelector,
   setOrder,
   clearNewOrder
 } from '../../slices/orderSlice';
+import { getIsAuthenticatedSelector } from '../../slices/userSlice';
 
 export const BurgerConstructor: FC = () => {
   const constructorItems: TConstructorBurgerState =
     useSelector(getConstructorItems);
-
-  const {
-    isOrderCreating: orderRequest,
-    order: orderModalData,
-    error: newOrderError
-  } = useSelector(getNewOrderSelector);
+  const orderRequest = useSelector(getIsOrderCreatingSelector);
+  const orderModalData = useSelector(getNewOrderSelector);
+  const isAuthenticated = useSelector(getIsAuthenticatedSelector);
 
   const dispatch = useDispatch();
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  const onOrderClick = () => {
+  const onOrderClick = async () => {
     if (!constructorItems.bun || orderRequest) return;
+
+    if (!isAuthenticated) {
+      navigate('/login', { state: { from: location } });
+      return;
+    }
 
     const orderData = [];
     //Добавляем булочки
@@ -38,11 +45,10 @@ export const BurgerConstructor: FC = () => {
       orderData.push(ingredient._id);
     });
 
-    dispatch(setOrder(orderData)).then(() => {
-      if (!orderRequest && !newOrderError) {
-        dispatch(clearConstructor());
-      }
-    });
+    const result = await dispatch(setOrder(orderData));
+    if (setOrder.fulfilled.match(result)) {
+      dispatch(clearConstructor());
+    }
   };
   const closeOrderModal = () => {
     dispatch(clearNewOrder());

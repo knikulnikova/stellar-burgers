@@ -55,25 +55,25 @@ export const ordersSlice = createSlice({
       state.newOrder = null;
       state.newOrderName = null;
       state.newOrderError = null;
+    },
+    clearOrderByNumber: (state) => {
+      state.ordersByNumber = [];
+      state.isOrdersByNumberLoading = false;
+      state.ordersByNumberError = null;
     }
   },
   selectors: {
-    getOrdersSelector: (state) => ({
-      orders: state.orders,
-      isOrdersLoading: state.isOrdersLoading,
-      error: state.ordersError
-    }),
-    getNewOrderSelector: (state) => ({
-      order: state.newOrder,
-      orderName: state.newOrderName,
-      isOrderCreating: state.isOrderCreating,
-      error: state.newOrderError
-    }),
-    getOrderByNumberSelector: (state) => ({
-      order: state.ordersByNumber,
-      isOrdersByNumberLoading: state.isOrdersByNumberLoading,
-      error: state.ordersByNumberError
-    })
+    getOrdersSelector: (state) => state.orders,
+    getIsOrdersLoadingSelector: (state) => state.isOrdersLoading,
+    getOrdersErrorSelector: (state) => state.ordersError,
+    getNewOrderSelector: (state) => state.newOrder,
+    getNewOrderNameSelector: (state) => state.newOrderName,
+    getIsOrderCreatingSelector: (state) => state.isOrderCreating,
+    getNewOrderErrorSelector: (state) => state.newOrderError,
+    getOrdersByNumberSelector: (state) => state.ordersByNumber,
+    getIsOrdersByNumberLoadingSelector: (state) =>
+      state.isOrdersByNumberLoading,
+    getOrdersByNumberErrorSelector: (state) => state.ordersByNumberError
   },
   extraReducers: (builder) => {
     builder
@@ -106,6 +106,7 @@ export const ordersSlice = createSlice({
       })
       .addCase(getOrderByNumber.pending, (state) => {
         state.isOrdersByNumberLoading = true;
+        state.ordersByNumber = [];
         state.ordersByNumberError = null;
       })
       .addCase(getOrderByNumber.rejected, (state, action) => {
@@ -122,8 +123,15 @@ export const ordersSlice = createSlice({
 
 export const {
   getOrdersSelector,
+  getIsOrdersLoadingSelector,
+  getOrdersErrorSelector,
   getNewOrderSelector,
-  getOrderByNumberSelector
+  getNewOrderNameSelector,
+  getIsOrderCreatingSelector,
+  getNewOrderErrorSelector,
+  getOrdersByNumberSelector,
+  getIsOrdersByNumberLoadingSelector,
+  getOrdersByNumberErrorSelector
 } = ordersSlice.selectors;
 
-export const { clearNewOrder } = ordersSlice.actions;
+export const { clearNewOrder, clearOrderByNumber } = ordersSlice.actions;

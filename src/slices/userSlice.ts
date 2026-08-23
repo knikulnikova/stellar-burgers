@@ -21,8 +21,6 @@ type TUserState = {
   loginError: string | null;
   isRegisterLoading: boolean;
   registerError: string | null;
-  isPasswordLoading: boolean;
-  passwordError: string | null;
   isUpdateLoading: boolean;
   updateError: string | null;
   logoutError: string | null;
@@ -36,8 +34,6 @@ const initialState: TUserState = {
   loginError: null,
   isRegisterLoading: false,
   registerError: null,
-  isPasswordLoading: false,
-  passwordError: null,
   isUpdateLoading: false,
   updateError: null,
   logoutError: null
@@ -63,18 +59,6 @@ export const loginUser = createAsyncThunk(
     localStorage.setItem('refreshToken', response.refreshToken);
     return response.user;
   }
-);
-
-//Восстановление пароля
-export const forgotPassword = createAsyncThunk(
-  'user/forgotPassword',
-  async (data: { email: string }) => forgotPasswordApi(data)
-);
-
-//Новый пароль
-export const resetPassword = createAsyncThunk(
-  'user/resetPassword',
-  async (data: { password: string; token: string }) => resetPasswordApi(data)
 );
 
 //Получение данных пользователя
@@ -106,32 +90,16 @@ export const userSlice = createSlice({
   initialState,
   reducers: {},
   selectors: {
-    getRegisterSelector: (state) => ({
-      data: state.data,
-      isAuthChecked: state.isAuthChecked,
-      isAuthenticated: state.isAuthenticated,
-      isRegisterLoading: state.isRegisterLoading,
-      error: state.registerError
-    }),
-    getLoginSelector: (state) => ({
-      data: state.data,
-      isAuthChecked: state.isAuthChecked,
-      isAuthenticated: state.isAuthenticated,
-      isLoginLoading: state.isLoginLoading,
-      error: state.loginError
-    }),
-    getPasswordSelector: (state) => ({
-      isPasswordLoading: state.isPasswordLoading,
-      error: state.passwordError
-    }),
-    getUpdateSelector: (state) => ({
-      data: state.data,
-      isUpdateLoading: state.isUpdateLoading,
-      error: state.updateError
-    }),
-    getLogoutSelector: (state) => ({
-      error: state.logoutError
-    })
+    getUserSelector: (state) => state.data,
+    getIsAuthCheckedSelector: (state) => state.isAuthChecked,
+    getIsAuthenticatedSelector: (state) => state.isAuthenticated,
+    getIsLoginLoadingSelector: (state) => state.isLoginLoading,
+    getLoginErrorSelector: (state) => state.loginError,
+    getIsRegisterLoadingSelector: (state) => state.isRegisterLoading,
+    getRegisterErrorSelector: (state) => state.registerError,
+    getIsUpdateLoadingSelector: (state) => state.isUpdateLoading,
+    getUpdateErrorSelector: (state) => state.updateError,
+    getLogoutErrorSelector: (state) => state.logoutError
   },
   extraReducers: (builder) => {
     builder
@@ -166,30 +134,6 @@ export const userSlice = createSlice({
         state.isAuthenticated = true;
         state.isAuthChecked = true;
         state.loginError = null;
-      })
-      .addCase(forgotPassword.pending, (state) => {
-        state.isPasswordLoading = true;
-        state.passwordError = null;
-      })
-      .addCase(forgotPassword.rejected, (state, action) => {
-        state.isPasswordLoading = false;
-        state.passwordError = action.error.message ?? null;
-      })
-      .addCase(forgotPassword.fulfilled, (state) => {
-        state.isPasswordLoading = false;
-        state.passwordError = null;
-      })
-      .addCase(resetPassword.pending, (state) => {
-        state.isPasswordLoading = true;
-        state.passwordError = null;
-      })
-      .addCase(resetPassword.rejected, (state, action) => {
-        state.isPasswordLoading = false;
-        state.passwordError = action.error.message ?? null;
-      })
-      .addCase(resetPassword.fulfilled, (state) => {
-        state.isPasswordLoading = false;
-        state.passwordError = null;
       })
       .addCase(getUser.pending, (state) => {
         state.isAuthChecked = false;
@@ -233,9 +177,14 @@ export const userSlice = createSlice({
 });
 
 export const {
-  getLoginSelector,
-  getRegisterSelector,
-  getPasswordSelector,
-  getUpdateSelector,
-  getLogoutSelector
+  getUserSelector,
+  getIsAuthCheckedSelector,
+  getIsAuthenticatedSelector,
+  getIsLoginLoadingSelector,
+  getLoginErrorSelector,
+  getIsRegisterLoadingSelector,
+  getRegisterErrorSelector,
+  getIsUpdateLoadingSelector,
+  getUpdateErrorSelector,
+  getLogoutErrorSelector
 } = userSlice.selectors;
