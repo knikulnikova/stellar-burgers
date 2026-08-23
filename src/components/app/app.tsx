@@ -44,7 +44,7 @@ const App = () => {
         <Route
           path='/login'
           element={
-            <ProtectedRoute>
+            <ProtectedRoute onlyUnAuth>
               <Login />
             </ProtectedRoute>
           }
@@ -52,7 +52,7 @@ const App = () => {
         <Route
           path='/register'
           element={
-            <ProtectedRoute>
+            <ProtectedRoute onlyUnAuth>
               <Register />
             </ProtectedRoute>
           }
@@ -60,7 +60,7 @@ const App = () => {
         <Route
           path='/forgot-password'
           element={
-            <ProtectedRoute>
+            <ProtectedRoute onlyUnAuth>
               <ForgotPassword />
             </ProtectedRoute>
           }
@@ -68,7 +68,7 @@ const App = () => {
         <Route
           path='/reset-password'
           element={
-            <ProtectedRoute>
+            <ProtectedRoute onlyUnAuth>
               <ResetPassword />
             </ProtectedRoute>
           }
@@ -116,16 +116,16 @@ const App = () => {
         <Route
           path='/profile/orders/:number'
           element={
-            <div className={styles.detailPageWrap}>
-              <p
-                className={`${styles.detailHeader} text text_type_digits-default`}
-              >
-                #{orderNumber}
-              </p>
-              <ProtectedRoute>
+            <ProtectedRoute>
+              <div className={styles.detailPageWrap}>
+                <p
+                  className={`${styles.detailHeader} text text_type_digits-default`}
+                >
+                  #{orderNumber}
+                </p>
                 <OrderInfo />
-              </ProtectedRoute>
-            </div>
+              </div>
+            </ProtectedRoute>
           }
         />
         <Route path='*' element={<NotFound404 />} />

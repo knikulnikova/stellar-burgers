@@ -1,8 +1,6 @@
 import {
   registerUserApi,
   loginUserApi,
-  forgotPasswordApi,
-  resetPasswordApi,
   getUserApi,
   updateUserApi,
   logoutApi
